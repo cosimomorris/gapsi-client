@@ -3,12 +3,21 @@ import useEliminarProveedor from "../hooks/useEliminarProveedor";
 import { Button, TextField, Container, Typography } from "@mui/material";
 
 function EliminarProveedor() {
-  const [id, setId] = useState("");
-  const { eliminarProveedor, isLoading, error } = useEliminarProveedor();
+  const [datosEliminar, setDatosEliminar] = useState({
+    nombre: "",
+    razonSocial: "",
+    direccion: "",
+  });
+  const { eliminarProveedor, error } = useEliminarProveedor();
 
-  const handleDelete = async () => {
-    await eliminarProveedor(id);
-    setId("");
+  const handleChange = (e) => {
+    setDatosEliminar({ ...datosEliminar, [e.target.name]: e.target.value });
+  };
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    await eliminarProveedor(datosEliminar);
+    setDatosEliminar({ nombre: "", razonSocial: "", direccion: "" });
     // Puedes agregar lógica para manejar la respuesta aquí
   };
 
@@ -19,18 +28,41 @@ function EliminarProveedor() {
       </Typography>
       <form onSubmit={handleDelete}>
         <TextField
-          label="ID del Proveedor"
+          label="Nombre del Proveedor"
           variant="outlined"
           fullWidth
-          value={id}
-          onChange={(e) => setId(e.target.value)}
+          name="nombre"
+          value={datosEliminar.nombre}
+          onChange={handleChange}
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="Razón Social"
+          variant="outlined"
+          fullWidth
+          name="razonSocial"
+          value={datosEliminar.razonSocial}
+          onChange={handleChange}
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="Dirección"
+          variant="outlined"
+          fullWidth
+          name="direccion"
+          value={datosEliminar.direccion}
+          onChange={handleChange}
           sx={{ mb: 2 }}
         />
         <Button
           variant="contained"
           color="secondary"
           type="submit"
-          disabled={!id}
+          disabled={
+            !datosEliminar.nombre ||
+            !datosEliminar.razonSocial ||
+            !datosEliminar.direccion
+          }
         >
           Eliminar Proveedor
         </Button>

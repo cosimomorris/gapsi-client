@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import useAgregarProveedor from "../hooks/useAgregarProveedor";
-import { Button, TextField, Container, Typography } from "@mui/material";
+import { Button, TextField, Container } from "@mui/material";
 
 function AgregarProveedor() {
   const [proveedor, setProveedor] = useState({
@@ -14,7 +14,7 @@ function AgregarProveedor() {
     telefono: "",
   });
   const { agregarProveedor, isLoading, error } = useAgregarProveedor();
-  const [exito, setExito] = useState(null); // Estado para indicar si la operación fue exitosa
+  const [exito, setExito] = useState(null);
 
   const handleChange = (e) => {
     setProveedor({ ...proveedor, [e.target.name]: e.target.value });
@@ -23,7 +23,6 @@ function AgregarProveedor() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación para asegurarse de que todos los campos estén llenos
     if (
       !proveedor.id ||
       !proveedor.nombre ||
@@ -39,26 +38,29 @@ function AgregarProveedor() {
     }
 
     try {
-      await agregarProveedor(proveedor);
-      setExito("Proveedor agregado exitosamente"); // Si la operación fue exitosa
-      setProveedor({
-        id: "",
-        nombre: "",
-        correo: "",
-        sitioWeb: "",
-        razonSocial: "",
-        direccion: "",
-        bio: "",
-        telefono: "",
-      }); // Limpiar los campos después de agregar
-    } catch (error) {
-      setExito(null); // Si hubo un error, borra el mensaje de éxito anterior
+      const response = await agregarProveedor(proveedor);
+      if (response && response.mensaje) {
+        setExito(response.mensaje);
+        setProveedor({
+          id: "",
+          nombre: "",
+          correo: "",
+          sitioWeb: "",
+          razonSocial: "",
+          direccion: "",
+          bio: "",
+          telefono: "",
+        });
+      }
+    } catch (err) {
+      setExito(null);
     }
   };
 
   return (
     <Container maxWidth="sm">
       <form onSubmit={handleSubmit}>
+        {/* Campos de texto para cada atributo del proveedor */}
         <TextField
           label="ID"
           name="id"
@@ -123,6 +125,7 @@ function AgregarProveedor() {
           fullWidth
           margin="normal"
         />
+
         <Button
           type="submit"
           variant="contained"
@@ -131,9 +134,10 @@ function AgregarProveedor() {
         >
           Agregar Proveedor
         </Button>
+
+        {/* Mensajes de error o éxito */}
         {error && <p>Error al agregar proveedor: {error.message}</p>}
-        {exito && <p>{exito}</p>}{" "}
-        {/* Mostrar mensaje de éxito si está definido */}
+        {exito && <p>{exito}</p>}
       </form>
     </Container>
   );

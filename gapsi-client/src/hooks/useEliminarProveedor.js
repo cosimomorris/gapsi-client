@@ -4,20 +4,22 @@ export default function useEliminarProveedor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const eliminarProveedor = async (idProveedor) => {
+  const eliminarProveedor = async ({ nombre, razonSocial, direccion }) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(
-        `http://localhost:3000/proveedores/${idProveedor}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`http://localhost:3000/proveedores`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ nombre, razonSocial, direccion }),
+      });
 
       if (!response.ok) {
-        throw new Error("Error al eliminar proveedor");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al eliminar proveedor");
       }
 
       setIsLoading(false);
