@@ -1,3 +1,7 @@
+// Patrón Hook: Este hook personalizado encapsula la lógica de eliminación de proveedores,
+//incluyendo el manejo de estados para la carga y los errores, así como la interacción con la
+//API para eliminar un proveedor. Proporciona una forma reutilizable y encapsulada de gestionar
+//la eliminación de proveedores en diferentes componentes de la aplicación.
 import { useState } from "react";
 
 export default function useEliminarProveedor() {
